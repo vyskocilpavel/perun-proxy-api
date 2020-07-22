@@ -26,4 +26,4 @@ connector:
     allow_untrusted_ssl: false
 
 attributes:
-  path: /etc/perun/attributes.yml
+  path: "${PWD}/src/test/resources/attributes.yml"
