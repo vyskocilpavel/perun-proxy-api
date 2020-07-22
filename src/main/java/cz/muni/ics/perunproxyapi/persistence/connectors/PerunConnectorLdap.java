@@ -1,4 +1,4 @@
-package cz.muni.ics.perunproxyapi.connectors;
+package cz.muni.ics.perunproxyapi.persistence.connectors;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
