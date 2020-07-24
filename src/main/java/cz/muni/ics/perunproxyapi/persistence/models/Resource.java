@@ -2,78 +2,42 @@ package cz.muni.ics.perunproxyapi.persistence.models;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.NonNull;
+import lombok.Setter;
 import lombok.ToString;
-
-import java.util.List;
 
 /**
  * Resource object model.
  *
- * @author Peter Jancus <jancus@ics.muni.cz>
+ * @author Dominik Frantisek Bucik <bucik@.ics.muni.cz>
+ * @author Ondrej Ernst <ondra.ernst@gmail.com>
  */
+@Getter
+@Setter
 @ToString
-@EqualsAndHashCode(callSuper = true)
-public class Resource extends Model {
-    @Getter
-    private Long voId;
-    @Getter
-    private String name;
-    @Getter
-    private String description;
-    @Getter
-    private Vo vo;
+@EqualsAndHashCode
+public class Resource {
 
-    @Getter
-    private List<Long> assignedGroupId;
+    @NonNull private Long id;
+    @NonNull private Long voId;
+    @NonNull private Long facilityId;
+    @NonNull private String name;
+    @NonNull private String description;
 
-    public Resource() {
-    }
-
-    public Resource(Long id, Long voId, String name, String description) {
-        super(id);
+    public Resource(Long id, Long voId, Long facilityId, String name, String description) {
+        this.setId(id);
         this.setVoId(voId);
+        this.setFacilityId(facilityId);
         this.setName(name);
         this.setDescription(description);
     }
 
-    /**
-     * Should be used when RichResource is obtained from Perun
-     */
-    public Resource(Long id, Long voId, String name, String description, Vo vo) {
-        this(id, voId, name, description);
-        this.setVo(vo);
-    }
-
-    public void setVoId(Long voId) {
-        if (voId == null) {
-            throw new IllegalArgumentException("voId can't be null");
-        }
-
-        this.voId = voId;
-    }
-
     public void setName(String name) {
-        if (name == null || name.length() == 0) {
-            throw new IllegalArgumentException("name can't be null or empty");
+        if (name.trim().isEmpty()) {
+            throw new IllegalArgumentException("name cannot be empty");
         }
 
         this.name = name;
     }
 
-    public void setDescription(String description) {
-        if (description == null) {
-            throw new IllegalArgumentException("description can't be null");
-        }
-
-        this.description = description;
-    }
-
-    public void setVo(Vo vo) {
-        this.vo = vo;
-    }
-
-    public void setAssignedGroupId(List<Long> assignedGroupId) {
-        this.assignedGroupId = assignedGroupId;
-    }
 }
-

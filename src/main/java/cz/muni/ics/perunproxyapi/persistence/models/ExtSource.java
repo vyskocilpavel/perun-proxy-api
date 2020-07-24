@@ -3,48 +3,46 @@ package cz.muni.ics.perunproxyapi.persistence.models;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
-
+import lombok.NonNull;
+import lombok.Setter;
 import lombok.ToString;
-
 
 /**
  * Model for ExtSource
  *
- * @author Dominik Frantisek Bucik <bucik@ics.muni.cz>
+ * @author Dominik Frantisek Bucik <bucik@.ics.muni.cz>
+ * @author Ondrej Ernst <ondra.ernst@gmail.com>
  */
-@EqualsAndHashCode(callSuper = true)
+@Getter
+@Setter
 @ToString
-public class ExtSource extends Model {
+@EqualsAndHashCode
+public class ExtSource {
 
-    @Getter
-    private String name;
-    @Getter
-    private String type;
-
-    public ExtSource() {
-    }
+    @NonNull private Long id;
+    @NonNull private String name;
+    @NonNull private String type;
 
     public ExtSource(Long id, String name, String type) {
-        super(id);
+        this.setId(id);
         this.setName(name);
         this.setType(type);
     }
 
-
     public void setName(String name) {
-        if (name == null || name.length() == 0) {
-            throw new IllegalArgumentException("name cannot be null nor empty");
+        if (name.trim().isEmpty()) {
+            throw new IllegalArgumentException("name cannot be empty");
         }
 
         this.name = name;
     }
 
-
     public void setType(String type) {
-        if (type == null || type.length() == 0) {
-            throw new IllegalArgumentException("type cannot be null nor empty");
+        if (type.trim().isEmpty()) {
+            throw new IllegalArgumentException("type cannot be empty");
         }
 
         this.type = type;
     }
+
 }

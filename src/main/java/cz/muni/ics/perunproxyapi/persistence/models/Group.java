@@ -1,40 +1,33 @@
 package cz.muni.ics.perunproxyapi.persistence.models;
 
 
-import com.fasterxml.jackson.databind.JsonNode;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.NonNull;
+import lombok.Setter;
 import lombok.ToString;
-
-import java.util.LinkedHashMap;
-import java.util.Map;
 
 /**
  * Group object model.
  *
- * @author Peter Jancus <jancus@ics.muni.cz>
+ * @author Dominik Frantisek Bucik <bucik@.ics.muni.cz>
+ * @author Ondrej Ernst <ondra.ernst@gmail.com>
  */
-@EqualsAndHashCode(callSuper = true)
+@Getter
+@Setter
 @ToString
-public class Group extends Model {
-    @Getter
-    private Long parentGroupId;
-    @Getter
-    private String name;
-    @Getter
-    private String description;
-    @Getter
-    private String uniqueGroupName; // voShortName + ":" + group name
-    @Getter
-    private Long voId;
-    @Getter
-    private Map<String, JsonNode> attributes = new LinkedHashMap<>();
+@EqualsAndHashCode
+public class Group {
 
-    public Group() {
-    }
+    @NonNull private Long id;
+    private Long parentGroupId;
+    @NonNull private String name;
+    @NonNull private String description;
+    private String uniqueGroupName; // voShortName + ":" + group name
+    @NonNull private Long voId;
 
     public Group(Long id, Long parentGroupId, String name, String description, String uniqueGroupName, Long voId) {
-        super(id);
+        this.setId(id);
         this.setParentGroupId(parentGroupId);
         this.setName(name);
         this.setDescription(description);
@@ -42,75 +35,12 @@ public class Group extends Model {
         this.setVoId(voId);
     }
 
-    public void setParentGroupId(Long parentGroupId) {
-        this.parentGroupId = parentGroupId;
-    }
-
-    public String getName() {
-        return name;
-    }
-
     public void setName(String name) {
-        if (name == null || name.length() == 0) {
-            throw new IllegalArgumentException("name cannot be null nor empty");
+        if (name.trim().isEmpty()) {
+            throw new IllegalArgumentException("name cannot be empty");
         }
-
         this.name = name;
     }
 
-    public void setDescription(String description) {
-        if (description == null || description.length() == 0) {
-            throw new IllegalArgumentException("description cannot be null nor empty");
-        }
-
-        this.description = description;
-    }
-
-    public void setUniqueGroupName(String uniqueGroupName) {
-        this.uniqueGroupName = uniqueGroupName;
-    }
-
-    public void setVoId(Long voId) {
-        if (voId == null) {
-            throw new IllegalArgumentException("voId cannot be null");
-        }
-
-        this.voId = voId;
-    }
-
-    public void setAttributes(Map<String, JsonNode> attributes) {
-        this.attributes = attributes;
-    }
-
-    /**
-     * Gets attribute by urn name
-     *
-     * @param attributeName urn name of attribute
-     * @return attribute
-     */
-    public JsonNode getAttributeByUrnName(String attributeName) {
-        if (attributes == null || !attributes.containsKey(attributeName)) {
-            return null;
-        }
-
-        return attributes.get(attributeName);
-    }
-
-    /**
-     * Gets attribute by friendly name
-     *
-     * @param attributeName      attribute name
-     * @param attributeUrnPrefix urn prefix of attribute
-     * @return attribute
-     */
-    public JsonNode getAttributeByFriendlyName(String attributeName, String attributeUrnPrefix) {
-        String key = attributeUrnPrefix + ":" + attributeName;
-
-        if (attributes == null || !attributes.containsKey(key)) {
-            return null;
-        }
-
-        return attributes.get(key);
-    }
 }
 

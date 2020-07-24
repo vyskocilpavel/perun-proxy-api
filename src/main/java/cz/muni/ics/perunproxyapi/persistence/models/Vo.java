@@ -2,44 +2,46 @@ package cz.muni.ics.perunproxyapi.persistence.models;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.NonNull;
+import lombok.Setter;
 import lombok.ToString;
 
 /**
  * Virtual Organization (Vo) object model.
  *
  * @author Dominik Frantisek Bucik <bucik@.ics.muni.cz>
+ * @author Ondrej Ernst <ondra.ernst@gmail.com>
  */
+@Getter
+@Setter
 @ToString
-@EqualsAndHashCode(callSuper = true)
-public class Vo extends Model {
+@EqualsAndHashCode
+public class Vo {
 
-    @Getter
-    private String name;
-    @Getter
-    private String shortName;
-
-    public Vo() {
-    }
+    @NonNull private Long id;
+    @NonNull private String name;
+    @NonNull private String shortName;
 
     public Vo(Long id, String name, String shortName) {
-        super(id);
+        this.setId(id);
         this.setName(name);
         this.setShortName(shortName);
     }
 
     public void setName(String name) {
-        if (name == null || name.length() == 0) {
-            throw new IllegalArgumentException("name can't be null or empty");
+        if (name.trim().isEmpty()) {
+            throw new IllegalArgumentException("name cannot be empty");
         }
 
         this.name = name;
     }
 
     public void setShortName(String shortName) {
-        if (shortName == null || shortName.length() == 0) {
-            throw new IllegalArgumentException("shortName can't be null or empty");
+        if (shortName.trim().isEmpty()) {
+            throw new IllegalArgumentException("shortName cannot or empty");
         }
 
         this.shortName = shortName;
     }
+
 }

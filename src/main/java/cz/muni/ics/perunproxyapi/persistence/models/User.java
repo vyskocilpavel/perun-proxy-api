@@ -2,47 +2,38 @@ package cz.muni.ics.perunproxyapi.persistence.models;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.NonNull;
+import lombok.Setter;
 import lombok.ToString;
 
 /**
  * Represents user from Perun.
  *
- * @author Martin Kuba <makub@ics.muni.cz>
+ * @author Dominik Frantisek Bucik <bucik@.ics.muni.cz>
+ * @author Ondrej Ernst <ondra.ernst@gmail.com>
  */
+@Getter
+@Setter
 @ToString
-@EqualsAndHashCode(callSuper = true)
-public class User extends Model {
-    @Getter
-    private String firstName;
-    @Getter
-    private String lastName;
-    @Getter
-    private String memberOf;
+@EqualsAndHashCode
+public class User {
 
+    @NonNull private Long id;
+    @NonNull private String firstName;
+    @NonNull private String lastName;
 
-    public User() {
-    }
-
-    public User(long id, String firstName, String lastName) {
-        super(id);
+    public User(Long id, String firstName, String lastName) {
+        this.setId(id);
         this.setFirstName(firstName);
         this.setLastName(lastName);
     }
 
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
-
     public void setLastName(String lastName) {
-        if (lastName == null || lastName.length() == 0) {
+        if (lastName.trim().isEmpty()) {
             throw new IllegalArgumentException("name can't be null or empty");
         }
 
         this.lastName = lastName;
     }
 
-    public void setMemberOf(String memberOf) {
-        this.memberOf = memberOf;
-    }
 }
-

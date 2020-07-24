@@ -2,6 +2,8 @@ package cz.muni.ics.perunproxyapi.persistence.models;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.NonNull;
+import lombok.Setter;
 import lombok.ToString;
 
 import java.sql.Timestamp;
@@ -9,28 +11,24 @@ import java.sql.Timestamp;
 /**
  * Model of Perun UserExtSource
  *
- * @author Dominik Frantisek Bucik <bucik@ics.muni.cz>
+ * @author Dominik Frantisek Bucik <bucik@.ics.muni.cz>
+ * @author Ondrej Ernst <ondra.ernst@gmail.com>
  */
+@Getter
+@Setter
 @ToString
-@EqualsAndHashCode(callSuper = true)
-public class UserExtSource extends Model {
+@EqualsAndHashCode
+public class UserExtSource {
 
-    @Getter
-    private ExtSource extSource;
-    @Getter
-    private String login;
-    @Getter
+    @NonNull private Long id;
+    @NonNull private ExtSource extSource;
+    @NonNull private String login;
     private int loa = 0;
-    @Getter
     private boolean persistent;
-    @Getter
     private Timestamp lastAccess;
 
-    public UserExtSource() {
-    }
-
     public UserExtSource(Long id, ExtSource extSource, String login, int loa, boolean persistent, Timestamp lastAccess) {
-        super(id);
+        this.setId(id);
         this.setExtSource(extSource);
         this.setLogin(login);
         this.setLoa(loa);
@@ -38,17 +36,9 @@ public class UserExtSource extends Model {
         this.setLastAccess(lastAccess);
     }
 
-    public void setExtSource(ExtSource extSource) {
-        if (extSource == null) {
-            throw new IllegalArgumentException("extSource can't be null");
-        }
-
-        this.extSource = extSource;
-    }
-
     public void setLogin(String login) {
-        if (login == null || login.length() == 0) {
-            throw new IllegalArgumentException("login can't be null or empty");
+        if (login.trim().isEmpty()) {
+            throw new IllegalArgumentException("login cannot be empty");
         }
 
         this.login = login;
@@ -60,14 +50,6 @@ public class UserExtSource extends Model {
         }
 
         this.loa = loa;
-    }
-
-    public void setPersistent(boolean persistent) {
-        this.persistent = persistent;
-    }
-
-    public void setLastAccess(Timestamp lastAccess) {
-        this.lastAccess = lastAccess;
     }
 
 }
