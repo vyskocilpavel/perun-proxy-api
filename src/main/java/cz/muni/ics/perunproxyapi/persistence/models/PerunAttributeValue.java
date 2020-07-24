@@ -1,6 +1,7 @@
 package cz.muni.ics.perunproxyapi.persistence.models;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.BooleanNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
@@ -13,6 +14,7 @@ import lombok.Data;
 import lombok.NonNull;
 import org.springframework.util.StringUtils;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -34,9 +36,17 @@ public class PerunAttributeValue {
     public final static String MAP_TYPE = "java.util.LinkedHashMap";
     public final static String LARGE_STRING_TYPE = "java.lang.LargeString";
     public final static String LARGE_ARRAY_LIST_TYPE = "java.util.LargeArrayList";
+    public final static String NULL_TYPE = "null";
+    public final static PerunAttributeValue NULL = new PerunAttributeValue(NULL_TYPE, JsonNodeFactory.instance.nullNode());
 
     private String type;
     private JsonNode value;
+
+    public PerunAttributeValue(String type, JsonNode value) {
+        super();
+        this.setType(type);
+        this.setValue(type, value);
+    }
 
     public void setType(@NonNull String type) {
         if (StringUtils.isEmpty(type)) {
@@ -61,6 +71,7 @@ public class PerunAttributeValue {
 
     /**
      * Get value as String.
+     *
      * @return String value or null.
      */
     public String valueAsString() {
@@ -77,6 +88,7 @@ public class PerunAttributeValue {
 
     /**
      * Get value as Long
+     *
      * @return Long value or null.
      */
     public Long valueAsLong() {
@@ -93,6 +105,7 @@ public class PerunAttributeValue {
 
     /**
      * Get value as Boolean.
+     *
      * @return TRUE if value is TRUE, FALSE in case of value being FALSE or NULL.
      */
     public boolean valueAsBoolean() {
@@ -109,6 +122,7 @@ public class PerunAttributeValue {
 
     /**
      * Get value as List of Strings
+     *
      * @return List of Strings
      */
     public List<String> valueAsList() {
@@ -129,8 +143,9 @@ public class PerunAttributeValue {
 
     /**
      * Get value as map of Strings to Strings
-     * @throws InconvertibleValueException when value cannot be converted to the Map<String, String>
+     *
      * @return Map of String keys to String values
+     * @throws InconvertibleValueException when value cannot be converted to the Map<String, String>
      */
     public Map<String, String> valueAsMap() throws InconvertibleValueException {
         if (MAP_TYPE.equals(type)) {
@@ -161,5 +176,22 @@ public class PerunAttributeValue {
                 value instanceof NullNode ||
                 value.isNull() ||
                 "null".equalsIgnoreCase(value.asText());
+    }
+
+    /**
+     * Get value as JsonNode
+     *
+     * @return JsonNode or NullNode
+     */
+    public JsonNode valueAsJson() {
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            String json = objectMapper.writeValueAsString(value);
+            return objectMapper.readTree(json);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return NullNode.getInstance();
     }
 }
