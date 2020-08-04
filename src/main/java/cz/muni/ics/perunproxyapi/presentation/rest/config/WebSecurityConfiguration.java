@@ -1,5 +1,7 @@
 package cz.muni.ics.perunproxyapi.presentation.rest.config;
 
+import cz.muni.ics.perunproxyapi.presentation.rest.models.User;
+import cz.muni.ics.perunproxyapi.presentation.rest.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -12,17 +14,17 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import java.util.List;
+
 @Configuration
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
-public class WebSecurityConfigurationBA extends WebSecurityConfigurerAdapter {
+public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     public static final String BASIC_AUTH_PATH = "/ba";
 
-    @Value("${security.user}")
-    private String username;
-    @Value("${security.password}")
-    private String password;
+    @Value("${security.path}")
+    private String pathToUsers;
 
     private static final String ROLE_API_USER = "API_USER";
 
@@ -39,10 +41,14 @@ public class WebSecurityConfigurationBA extends WebSecurityConfigurerAdapter {
 
     @Autowired
     public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
-        auth.inMemoryAuthentication()
-                .withUser(username)
-                .password(passwordEncoder().encode(password))
-                .roles(ROLE_API_USER);
+        List<User> users = UserService.getUsersFromYamlFile(pathToUsers);
+
+        for (User user : users) {
+            auth.inMemoryAuthentication()
+                    .withUser(user.getUsername())
+                    .password(passwordEncoder().encode(user.getPassword()))
+                    .roles(ROLE_API_USER);
+        }
     }
 
     @Bean

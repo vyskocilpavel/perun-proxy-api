@@ -33,8 +33,7 @@ attributes:
   path: /etc/perun/attributes.yml
 
 security:
-  user: "user"
-  password: "password"
+  path: /etc/perun/users.yml
 
 server:
   port: 8080
