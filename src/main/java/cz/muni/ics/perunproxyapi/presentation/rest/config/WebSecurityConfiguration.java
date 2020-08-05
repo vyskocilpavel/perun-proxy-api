@@ -1,7 +1,12 @@
 package cz.muni.ics.perunproxyapi.presentation.rest.config;
 
-import cz.muni.ics.perunproxyapi.presentation.rest.models.User;
-import cz.muni.ics.perunproxyapi.presentation.rest.service.UserService;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -14,17 +19,27 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
+import static cz.muni.ics.perunproxyapi.presentation.rest.config.PathConstants.NO_AUTH_PATH;
+
+/**
+ * Spring Security configuration.
+ *
+ * @author Dominik Frantisek Bucik <bucik@ics.muni.cz>
+ * @author Dominik Baranek <baranek@ics.muni.cz>
+ */
 @Configuration
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
+@Slf4j
 public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 
-    public static final String BASIC_AUTH_PATH = "/ba";
-
-    @Value("${security.path}")
-    private String pathToUsers;
+    @Value("${security.basicauth.path}")
+    private String userFilesPath;
 
     private static final String ROLE_API_USER = "API_USER";
 
@@ -32,18 +47,25 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http.csrf().disable()
                 .authorizeRequests()
-                .antMatchers(BASIC_AUTH_PATH + "/**")
-                .authenticated()
-                .anyRequest().permitAll()
+                .antMatchers(NO_AUTH_PATH + "/**").permitAll()
+                .anyRequest().authenticated()
                 .and()
                 .httpBasic();
     }
 
     @Autowired
     public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
-        List<User> users = UserService.getUsersFromYamlFile(pathToUsers);
+        List<BasicAuthCredentials> credentials = new ArrayList<>();
+        try {
+            ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
 
-        for (User user : users) {
+            credentials = mapper.readValue(new File(userFilesPath), new TypeReference<>() {});
+        } catch (IOException e) {
+            log.warn("Reading user credentials from config was not successful", e);
+        }
+
+        for (BasicAuthCredentials user: credentials) {
+            log.debug("Configuring credentials {} for Basic Auth with role {}.", credentials, ROLE_API_USER);
             auth.inMemoryAuthentication()
                     .withUser(user.getUsername())
                     .password(passwordEncoder().encode(user.getPassword()))
@@ -55,4 +77,20 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
+
+    @Data
+    @NoArgsConstructor
+    private static class BasicAuthCredentials {
+        @NonNull private String username;
+        @NonNull private String password;
+
+        @Override
+        public String toString() {
+            return "BasicAuthCredentials{" +
+                    "username='" + username + '\'' +
+                    ", password='*************'" +
+                    '}';
+        }
+    }
+
 }

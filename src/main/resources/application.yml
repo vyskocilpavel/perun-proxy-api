@@ -1,8 +1,4 @@
 ---
-spring:
-  profiles:
-    active: "dev"
-
 connector:
   rpc:
     perun_url: "https://perun-dev.cesnet.cz/ba/rpc"
@@ -33,7 +29,8 @@ attributes:
   path: /etc/perun/attributes.yml
 
 security:
-  path: /etc/perun/users.yml
+  basicauth:
+    path: /etc/perun/api-auth.yml
 
 server:
   port: 8080
