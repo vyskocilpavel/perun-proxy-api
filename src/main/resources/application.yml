@@ -27,3 +27,12 @@ connector:
 
 attributes:
   path: /etc/perun/attributes.yml
+
+security:
+  basicauth:
+    path: /etc/perun/api-auth.yml
+
+server:
+  port: 8080
+  servlet:
+    context-path: /proxyapi
