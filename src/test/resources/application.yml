@@ -27,3 +27,7 @@ connector:
 
 attributes:
   path: "${PWD}/src/test/resources/attributes.yml"
+
+security:
+  basicauth:
+    path: "${PWD}/src/test/resources/basicauth.yml"
