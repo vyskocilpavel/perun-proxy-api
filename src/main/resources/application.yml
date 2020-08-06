@@ -36,3 +36,10 @@ server:
   port: 8080
   servlet:
     context-path: /proxyapi
+
+management:
+  info:
+    git:
+      enabled: false
+    build:
+      enabled: false
