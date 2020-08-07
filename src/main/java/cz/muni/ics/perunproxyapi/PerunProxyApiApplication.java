@@ -9,4 +9,5 @@ public class PerunProxyApiApplication {
     public static void main(String[] args) {
         SpringApplication.run(PerunProxyApiApplication.class, args);
     }
+
 }
