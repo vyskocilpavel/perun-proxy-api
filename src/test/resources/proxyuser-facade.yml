@@ -1,0 +1,5 @@
+---
+
+- methodName: "find_by_identifiers"
+  configuration:
+    adapter: "RPC"

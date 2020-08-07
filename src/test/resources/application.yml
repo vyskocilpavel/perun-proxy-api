@@ -1,4 +1,5 @@
 ---
+
 connector:
   rpc:
     perun_url: "https://perun-dev.cesnet.cz/ba/rpc"
@@ -27,6 +28,11 @@ connector:
 
 attributes:
   path: "${PWD}/src/test/resources/attributes.yml"
+
+facade:
+  config_path:
+    proxyuser: "${PWD}/src/test/resources/proxyuser-facade.yml"
+    relying_party: "${PWD}/src/test/resources/relying-party-facade.yml"
 
 security:
   basicauth:
