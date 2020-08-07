@@ -6,7 +6,7 @@ import cz.muni.ics.perunproxyapi.persistence.models.User;
 import java.util.List;
 
 /**
- * Middleware for user related things. Purpose of this class to execute correct methods on the given adapter.
+ * Middleware for user related things. Purpose of this class is to execute correct methods on the given adapter.
  *
  * @author Dominik Frantisek Bucik <bucik@ics.muni.cz>
  * @author Pavol Pluta <pavol.pluta1@gmail.com>

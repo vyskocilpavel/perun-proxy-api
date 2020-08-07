@@ -18,7 +18,7 @@ public interface ProxyuserFacade {
      * Find user by userIdentifiers via given adapter.
      *
      * @param idpIdentifier Identifier of source Identity Provider.
-     * @param userIdentifiers List of User users identifiers.
+     * @param userIdentifiers List of string containing identifiers of a user.
      * @return User or null.
      */
     User findByExtLogins(String idpIdentifier, List<String> userIdentifiers);
