@@ -32,6 +32,7 @@ attributes:
 facade:
   config_path:
     proxyuser: "${PWD}/src/test/resources/proxyuser-facade.yml"
+      default_idp: "https://idp.example.com/idp/"
     relying_party: "${PWD}/src/test/resources/relying-party-facade.yml"
 
 security:
