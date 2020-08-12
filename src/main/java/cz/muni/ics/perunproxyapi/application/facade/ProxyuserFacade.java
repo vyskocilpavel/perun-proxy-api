@@ -2,6 +2,7 @@ package cz.muni.ics.perunproxyapi.application.facade;
 
 
 import cz.muni.ics.perunproxyapi.persistence.models.User;
+import cz.muni.ics.perunproxyapi.presentation.DTOModels.UserDTO;
 
 import java.util.List;
 
@@ -22,5 +23,13 @@ public interface ProxyuserFacade {
      * @return User or null.
      */
     User findByExtLogins(String idpIdentifier, List<String> userIdentifiers);
+
+    /**
+     *
+     * @param login User's login.
+     * @param fields List of user's attributes.
+     * @return User with attributes values or null.
+     */
+    UserDTO getUserByLogin(String login, List<String> fields);
 
 }

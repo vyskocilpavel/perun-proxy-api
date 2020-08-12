@@ -8,5 +8,6 @@ package cz.muni.ics.perunproxyapi.application.facade.configuration;
 public class MethodNameConstants {
 
     public static final String FIND_BY_EXT_LOGINS = "find_by_ext_logins";
+    public static final String GET_USER_BY_LOGIN = "get_user_by_login";
 
 }
