@@ -2,9 +2,11 @@ package cz.muni.ics.perunproxyapi.presentation.rest.controllers;
 
 import cz.muni.ics.perunproxyapi.application.facade.impl.ProxyuserFacadeImpl;
 import cz.muni.ics.perunproxyapi.persistence.models.User;
+import cz.muni.ics.perunproxyapi.presentation.DTOModels.UserDTO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -42,6 +44,12 @@ public class ProxyUserProtectedController {
     public User findByExtLogins(@RequestParam(value = PARAM_IDP_IDENTIFIER) String idpIdentifier,
                                 @RequestParam(value = PARAM_IDENTIFIERS) List<String> identifiers) {
         return facade.findByExtLogins(idpIdentifier, identifiers);
+    }
+
+    @RequestMapping(value = "/{login}", method = RequestMethod.GET)
+    public UserDTO getUserByLogin(@PathVariable("login") String login,
+                                  @RequestParam(value = "fields") List<String> fields) {
+        return facade.getUserByLogin(login, fields);
     }
 
 }
