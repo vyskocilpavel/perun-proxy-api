@@ -19,11 +19,14 @@ public class ProxyUserMiddlewareImpl implements ProxyUserMiddleware {
         return preferredAdapter.getPerunUser(idpEntityId, userIdentifiers);
     }
 
-    public User getUserByAttribute(DataAdapter preferredAdapter, String idpIdentifier, String attribute) {
-        return preferredAdapter.getPerunUser(idpIdentifier, Collections.singletonList(attribute));
+    @Override
+    public User findByExtLogin(DataAdapter preferredAdapter, String idpIdentifier, String login) {
+        return findByExtLogins(preferredAdapter, idpIdentifier, Collections.singletonList(login));
     }
 
+    @Override
     public Map<String, PerunAttributeValue> getAttributesValues(DataAdapter preferredAdapter, Entity entity, long id, List<String> attributes) {
         return preferredAdapter.getAttributesValues(entity, id, attributes);
     }
+
 }

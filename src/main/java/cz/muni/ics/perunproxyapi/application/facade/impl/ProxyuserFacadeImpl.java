@@ -23,6 +23,7 @@ import java.util.Map;
 import static cz.muni.ics.perunproxyapi.application.facade.configuration.MethodNameConstants.GET_USER_BY_LOGIN;
 import static cz.muni.ics.perunproxyapi.application.facade.configuration.MethodNameConstants.FIND_BY_EXT_LOGINS;
 import static cz.muni.ics.perunproxyapi.application.facade.impl.MethodOptionsConstants.ADAPTER;
+import static cz.muni.ics.perunproxyapi.application.facade.impl.MethodOptionsConstants.IDP_IDENTIFIER;
 import static cz.muni.ics.perunproxyapi.application.facade.impl.MethodOptionsConstants.RPC;
 
 @Component
@@ -39,7 +40,7 @@ public class ProxyuserFacadeImpl implements ProxyuserFacade {
     public ProxyuserFacadeImpl(@NonNull ProxyUserMiddleware userMiddleware,
                                @NonNull AdaptersContainer adaptersContainer,
                                @NonNull FacadeConfiguration facadeConfiguration,
-                               @Value("${facade.config_path.proxyuser.default_idp}") String defaultIdp) {
+                               @Value("${facade.default_idp}") String defaultIdp) {
         this.userMiddleware = userMiddleware;
         this.adaptersContainer = adaptersContainer;
         this.methodConfigurations = facadeConfiguration.getProxyUserAdapterMethodConfigurations();
@@ -58,22 +59,23 @@ public class ProxyuserFacadeImpl implements ProxyuserFacade {
         return userMiddleware.findByExtLogins(adapter, idpIdentifier, userIdentifiers);
     }
 
+    @Override
     public UserDTO getUserByLogin(String login, List<String> fields) {
         JsonNode options = methodConfigurations.getOrDefault(GET_USER_BY_LOGIN, JsonNodeFactory.instance.nullNode());
         DataAdapter adapter = adaptersContainer.getPreferredAdapter(
-                options.has("adapter") ? options.get("adapter").asText() : "RPC");
+                options.has(ADAPTER) ? options.get(ADAPTER).asText() : RPC);
         String idpIdentifier =
-                options.has("idpIdentifier") ? options.get("idpIdentifier").asText() : defaultIdpIdentifier;
+                options.has(IDP_IDENTIFIER) ? options.get(IDP_IDENTIFIER).asText() : defaultIdpIdentifier;
 
-        User user = userMiddleware.getUserByAttribute(adapter, idpIdentifier , login);
+        User user = userMiddleware.findByExtLogin(adapter, idpIdentifier , login);
         UserDTO userDTO =
                 new UserDTO(login,
                         user.getFirstName(),
                         user.getLastName(),
-                        String.format("%s %s",user.getFirstName(), user.getLastName()),
+                        String.format("%s %s", user.getFirstName(), user.getLastName()),
                         user.getId());
 
-        if (! fields.isEmpty()){
+        if (!fields.isEmpty()){
             Map<String, PerunAttributeValue> attributeValues =
                     userMiddleware.getAttributesValues(adapter, Entity.USER , user.getId() , fields);
             userDTO.setPerunAttributes(attributeValues);
@@ -81,4 +83,5 @@ public class ProxyuserFacadeImpl implements ProxyuserFacade {
 
         return userDTO;
     }
+
 }

@@ -31,10 +31,10 @@ public interface ProxyUserMiddleware {
      *
      * @param preferredAdapter Adapter to be used.
      * @param idpIdentifier Identifier of source Identity Provider.
-     * @param attribute User attribute.
+     * @param login User login attribute.
      * @return User or null.
      */
-    User getUserByAttribute(DataAdapter preferredAdapter, String idpIdentifier, String attribute);
+    User findByExtLogin(DataAdapter preferredAdapter, String idpIdentifier, String login);
 
     /**
      * Get attribute values for a given entity.

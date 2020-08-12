@@ -31,4 +31,5 @@ public interface ProxyuserFacade {
      * @return User with attributes values or null.
      */
     UserDTO getUserByLogin(String login, List<String> fields);
+
 }

@@ -10,6 +10,7 @@ public class MethodOptionsConstants {
 
     // options
     public static final String ADAPTER = "adapter";
+    public static final String IDP_IDENTIFIER = "idpIdentifier";
 
     // fallback values
     public static final String RPC = "RPC";

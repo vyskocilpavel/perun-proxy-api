@@ -13,6 +13,7 @@ import java.util.Map;
  */
 @Data
 public class UserDTO {
+
     @NonNull private String login;
     @NonNull private String firstName;
     @NonNull private String lastName;
