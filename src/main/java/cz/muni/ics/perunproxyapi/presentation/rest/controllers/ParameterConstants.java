@@ -10,5 +10,6 @@ public class ParameterConstants {
 
     public static final String PARAM_IDP_IDENTIFIER = "IdPIdentifier";
     public static final String PARAM_IDENTIFIERS = "identifiers";
-
+    public static final String PARAM_LOGIN = "login";
+    public static final String PARAM_FIELDS = "fields";
 }
