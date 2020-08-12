@@ -30,6 +30,7 @@ attributes:
   path: /etc/perun/attributes.yml
 
 facade:
+  default_idp: "https://idp.example.com/idp/"
   config_path:
     proxyuser: "/etc/perun/proxyuser-facade.yml"
     relying_party: "/etc/perun/relying-party-facade.yml"
