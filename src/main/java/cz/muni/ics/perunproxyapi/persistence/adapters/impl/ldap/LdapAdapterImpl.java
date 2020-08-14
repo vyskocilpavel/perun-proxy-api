@@ -370,6 +370,9 @@ public class LdapAdapterImpl implements DataAdapter {
             case MAP_JSON:
                 return new PerunAttributeValue(PerunAttributeValue.MAP_TYPE,
                         getMapNodeJson(attr));
+            case MAP_KEY_VALUE:
+                return new PerunAttributeValue(PerunAttributeValue.MAP_TYPE,
+                        getMapNodeSeparator(attr, mapping.getSeparator()));
             default:
                 throw new IllegalArgumentException("unrecognized type");
         }
