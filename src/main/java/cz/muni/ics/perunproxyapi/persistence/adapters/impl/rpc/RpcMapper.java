@@ -18,6 +18,7 @@ import lombok.NonNull;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -36,6 +37,10 @@ public class RpcMapper {
      * @return Mapped User object.
      */
     public static User mapUser(@NonNull JsonNode json) {
+        if (json.isNull()) {
+            return null;
+        }
+
         Long id = json.get("id").asLong();
         String firstName = json.get("firstName").asText();
         String lastName = json.get("lastName").asText();
@@ -49,6 +54,10 @@ public class RpcMapper {
      * @return Mapped Group object.
      */
     public static Group mapGroup(@NonNull JsonNode json) {
+        if (json.isNull()) {
+            return null;
+        }
+
         Long id = json.get("id").asLong();
         Long parentGroupId = json.get("parentGroupId").asLong();
         String name = json.get("name").asText();
@@ -64,6 +73,10 @@ public class RpcMapper {
      * @return List of groups.
      */
     public static List<Group> mapGroups(@NonNull JsonNode jsonArray) {
+        if (jsonArray.isNull()) {
+            return new ArrayList<>();
+        }
+
         List<Group> result = new ArrayList<>();
         for (int i = 0; i < jsonArray.size(); i++) {
             JsonNode groupNode = jsonArray.get(i);
@@ -80,6 +93,10 @@ public class RpcMapper {
      * @return Mapped Facility object.
      */
     public static Facility mapFacility(@NonNull JsonNode json) {
+        if (json.isNull()) {
+            return null;
+        }
+
         Long id = json.get("id").asLong();
         String name = json.get("name").asText();
         String description = json.get("description").asText();
@@ -93,6 +110,10 @@ public class RpcMapper {
      * @return List of facilities.
      */
     public static List<Facility> mapFacilities(@NonNull JsonNode jsonArray) {
+        if (jsonArray.isNull()) {
+            return new ArrayList<>();
+        }
+
         List<Facility> result = new ArrayList<>();
         for (int i = 0; i < jsonArray.size(); i++) {
             JsonNode facilityNode = jsonArray.get(i);
@@ -109,6 +130,10 @@ public class RpcMapper {
      * @return Mapped Member object.
      */
     public static Member mapMember(@NonNull JsonNode json) {
+        if (json.isNull()) {
+            return null;
+        }
+
         Long id = json.get("id").asLong();
         Long userId = json.get("userId").asLong();
         Long voId = json.get("voId").asLong();
@@ -123,6 +148,10 @@ public class RpcMapper {
      * @return List of members.
      */
     public static List<Member> mapMembers(@NonNull JsonNode jsonArray) {
+        if (jsonArray.isNull()) {
+            return new ArrayList<>();
+        }
+
         List<Member> members = new ArrayList<>();
         for (int i = 0; i < jsonArray.size(); i++) {
             JsonNode memberNode = jsonArray.get(i);
@@ -139,6 +168,10 @@ public class RpcMapper {
      * @return Mapped Resource object.
      */
     public static Resource mapResource(@NonNull JsonNode json) {
+        if (json.isNull()) {
+            return null;
+        }
+
         Long id = json.get("id").asLong();
         Long voId = json.get("voId").asLong();
         Long facilityId = json.get("facilityId").asLong();
@@ -161,6 +194,10 @@ public class RpcMapper {
      * @return List of resources.
      */
     public static List<Resource> mapResources(@NonNull JsonNode jsonArray) {
+        if (jsonArray.isNull()) {
+            return new ArrayList<>();
+        }
+
         List<Resource> resources = new ArrayList<>();
         for (int i = 0; i < jsonArray.size(); i++) {
             JsonNode resource = jsonArray.get(i);
@@ -177,6 +214,10 @@ public class RpcMapper {
      * @return Mapped ExtSource object.
      */
     public static ExtSource mapExtSource(@NonNull JsonNode json) {
+        if (json.isNull()) {
+            return null;
+        }
+
         Long id = json.get("id").asLong();
         String name = json.get("name").asText();
         String type = json.get("type").asText();
@@ -190,6 +231,10 @@ public class RpcMapper {
      * @return List of extSources.
      */
     public static List<ExtSource> mapExtSources(@NonNull JsonNode jsonArray) {
+        if (jsonArray.isNull()) {
+            return new ArrayList<>();
+        }
+
         List<ExtSource> extSources = new ArrayList<>();
 
         for (int i = 0; i < jsonArray.size(); i++) {
@@ -207,6 +252,10 @@ public class RpcMapper {
      * @return Mapped VO object.
      */
     public static Vo mapVo(@NonNull JsonNode json) {
+        if (json.isNull()) {
+            return null;
+        }
+
         Long id = json.get("id").asLong();
         String name = json.get("name").asText();
         String shortName = json.get("shortName").asText();
@@ -220,6 +269,10 @@ public class RpcMapper {
      * @return List of VOs.
      */
     public static List<Vo> mapVos(@NonNull JsonNode jsonArray) {
+        if (jsonArray.isNull()) {
+            return new ArrayList<>();
+        }
+
         List<Vo> vos = new ArrayList<>();
 
         for (int i = 0; i < jsonArray.size(); i++) {
@@ -237,6 +290,10 @@ public class RpcMapper {
      * @return Mapped UserExtSource object.
      */
     public static UserExtSource mapUserExtSource(@NonNull JsonNode json) {
+        if (json.isNull()) {
+            return null;
+        }
+
         Long id = json.get("id").asLong();
         String login = json.get("login").asText();
         ExtSource extSource = RpcMapper.mapExtSource(json.path("extSource"));
@@ -253,6 +310,10 @@ public class RpcMapper {
      * @return List of userExtSources.
      */
     public static List<UserExtSource> mapUserExtSources(@NonNull JsonNode jsonArray) {
+        if (jsonArray.isNull()) {
+            return new ArrayList<>();
+        }
+
         List<UserExtSource> userExtSources = new ArrayList<>();
 
         for (int i = 0; i < jsonArray.size(); i++) {
@@ -270,6 +331,10 @@ public class RpcMapper {
      * @return Mapped PerunAttribute object.
      */
     public static PerunAttribute mapAttribute(@NonNull JsonNode json) {
+        if (json.isNull()) {
+            return null;
+        }
+
         Long id = json.get("id").asLong();
         String friendlyName = json.get("friendlyName").asText();
         String namespace = json.get("namespace").asText();
@@ -299,6 +364,10 @@ public class RpcMapper {
      */
     public static Map<String, PerunAttribute> mapAttributes(@NonNull JsonNode jsonArray,
                                                             @NonNull Set<AttributeObjectMapping> attrMappings) {
+        if (jsonArray.isNull()) {
+            return new HashMap<>();
+        }
+
         Map<String, PerunAttribute> map = new HashMap<>(); //key is internal identifier
         Map<String, PerunAttribute> mappedAttrsMap = new HashMap<>(); //key is URN of the attribute
 
