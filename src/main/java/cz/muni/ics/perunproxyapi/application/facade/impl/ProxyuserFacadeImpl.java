@@ -22,11 +22,7 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 import java.util.Map;
 
-import static cz.muni.ics.perunproxyapi.application.facade.configuration.MethodNameConstants.GET_USER_BY_LOGIN;
-import static cz.muni.ics.perunproxyapi.application.facade.configuration.MethodNameConstants.FIND_BY_EXT_LOGINS;
-import static cz.muni.ics.perunproxyapi.application.facade.impl.MethodOptionsConstants.ADAPTER;
-import static cz.muni.ics.perunproxyapi.application.facade.impl.MethodOptionsConstants.IDP_IDENTIFIER;
-import static cz.muni.ics.perunproxyapi.application.facade.impl.MethodOptionsConstants.RPC;
+import static cz.muni.ics.perunproxyapi.application.facade.configuration.FacadeConfiguration.ADAPTER_RPC;
 
 @Component
 @Slf4j
@@ -37,6 +33,12 @@ public class ProxyuserFacadeImpl implements ProxyuserFacade {
     private final ProxyUserMiddleware userMiddleware;
 
     private final String defaultIdpIdentifier;
+
+    public static final String FIND_BY_EXT_LOGINS = "find_by_ext_logins";
+    public static final String GET_USER_BY_LOGIN = "get_user_by_login";
+
+    public static final String ADAPTER = "adapter";
+    public static final String IDP_IDENTIFIER = "idpIdentifier";
 
     @Autowired
     public ProxyuserFacadeImpl(@NonNull ProxyUserMiddleware userMiddleware,
@@ -54,7 +56,7 @@ public class ProxyuserFacadeImpl implements ProxyuserFacade {
     public User findByExtLogins(String idpIdentifier, List<String> userIdentifiers) throws PerunUnknownException, PerunConnectionException {
         JsonNode options = methodConfigurations.getOrDefault(FIND_BY_EXT_LOGINS, JsonNodeFactory.instance.nullNode());
         DataAdapter adapter = adaptersContainer.getPreferredAdapter(
-                options.has(ADAPTER) ? options.get(ADAPTER).asText() : RPC);
+                options.has(ADAPTER) ? options.get(ADAPTER).asText() : ADAPTER_RPC);
 
         log.debug("Calling userMiddleware.findByExtLogins on adapter {}", adapter.getClass());
 
@@ -65,7 +67,7 @@ public class ProxyuserFacadeImpl implements ProxyuserFacade {
     public UserDTO getUserByLogin(String login, List<String> fields) throws PerunUnknownException, PerunConnectionException {
         JsonNode options = methodConfigurations.getOrDefault(GET_USER_BY_LOGIN, JsonNodeFactory.instance.nullNode());
         DataAdapter adapter = adaptersContainer.getPreferredAdapter(
-                options.has(ADAPTER) ? options.get(ADAPTER).asText() : RPC);
+                options.has(ADAPTER) ? options.get(ADAPTER).asText() : ADAPTER_RPC);
         String idpIdentifier =
                 options.has(IDP_IDENTIFIER) ? options.get(IDP_IDENTIFIER).asText() : defaultIdpIdentifier;
 
