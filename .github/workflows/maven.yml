@@ -2,7 +2,7 @@ name: Maven build
 on: [ push, pull_request ]
 jobs:
   build:
-    name: JDK ${{ matrix.java }} build and tests
+    name: JDK ${{ matrix.java }} build
     runs-on: ubuntu-latest
     strategy:
       matrix:
