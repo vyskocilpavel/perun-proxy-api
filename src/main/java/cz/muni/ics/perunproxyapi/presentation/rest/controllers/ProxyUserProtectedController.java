@@ -37,6 +37,7 @@ public class ProxyUserProtectedController {
     public static final String PARAM_IDENTIFIERS = "identifiers";
     public static final String PARAM_LOGIN = "login";
     public static final String PARAM_FIELDS = "fields";
+    public static final String PARAM_USER_ID = "userId";
 
     @Autowired
     public ProxyUserProtectedController(ProxyuserFacadeImpl facade) {
@@ -60,6 +61,24 @@ public class ProxyUserProtectedController {
             throws PerunUnknownException, PerunConnectionException
     {
         return facade.getUserByLogin(login, fields);
+    }
+
+    /**
+     * Find Perun user by its id.<br>
+     * <br>
+     * <b>EXAMPLE CURL:</b>
+     * <br>
+     * curl --request GET --url 'http://127.0.0.1:8081/proxyapi/auth/proxy-user/findByPerunUserId?userId=62692'
+     * --header 'authorization: Basic auth'
+     *
+     * @param userId Id of a Perun user.
+     * @return JSON representation of the User object.
+     */
+    @RequestMapping(value = "/findByPerunUserId", method = RequestMethod.GET,
+        produces = MediaType.APPLICATION_JSON_VALUE )
+    public User findByPerunUserId(@RequestParam(value = PARAM_USER_ID) long userId)
+            throws PerunUnknownException, PerunConnectionException {
+        return facade.findByPerunUserId(userId);
     }
 
 }

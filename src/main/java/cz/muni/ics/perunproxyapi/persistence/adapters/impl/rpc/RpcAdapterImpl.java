@@ -188,6 +188,17 @@ public class RpcAdapterImpl implements FullAdapter {
     }
 
     @Override
+    public User findPerunUserById(Long userId)
+            throws PerunUnknownException, PerunConnectionException
+    {
+        Map<String, Object> params = new LinkedHashMap<>();
+        params.put(PARAM_ID, userId);
+
+        JsonNode perunResponse = connectorRpc.post(USERS_MANAGER, "getUserById", params);
+        return RpcMapper.mapUser(perunResponse);
+    }
+
+    @Override
     public List<Group> getUserGroupsInVo(@NonNull Long userId, @NonNull Long voId)
             throws PerunUnknownException, PerunConnectionException
     {
