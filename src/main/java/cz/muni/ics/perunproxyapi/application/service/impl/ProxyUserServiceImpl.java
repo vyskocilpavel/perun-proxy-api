@@ -1,6 +1,6 @@
 package cz.muni.ics.perunproxyapi.application.service.impl;
 
-import cz.muni.ics.perunproxyapi.application.service.ProxyUserMiddleware;
+import cz.muni.ics.perunproxyapi.application.service.ProxyUserService;
 import cz.muni.ics.perunproxyapi.persistence.adapters.DataAdapter;
 import cz.muni.ics.perunproxyapi.persistence.enums.Entity;
 import cz.muni.ics.perunproxyapi.persistence.exceptions.PerunUnknownException;
@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.Map;
 
 @Component
-public class ProxyUserMiddlewareImpl implements ProxyUserMiddleware {
+public class ProxyUserServiceImpl implements ProxyUserService {
 
     @Override
     public User findByExtLogins(DataAdapter preferredAdapter, String idpEntityId, List<String> userIdentifiers) throws PerunUnknownException, PerunConnectionException {
