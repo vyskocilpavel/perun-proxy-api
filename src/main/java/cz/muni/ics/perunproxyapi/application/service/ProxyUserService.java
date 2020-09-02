@@ -11,12 +11,12 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Middleware for user related things. Purpose of this class is to execute correct methods on the given adapter.
+ * Service layer for user related things. Purpose of this class is to execute correct methods on the given adapter.
  *
  * @author Dominik Frantisek Bucik <bucik@ics.muni.cz>
  * @author Pavol Pluta <pavol.pluta1@gmail.com>
  */
-public interface ProxyUserMiddleware {
+public interface ProxyUserService {
 
     /**
      * Find user by identifiers via given adapter.

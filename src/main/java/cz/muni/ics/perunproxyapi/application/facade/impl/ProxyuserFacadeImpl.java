@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import cz.muni.ics.perunproxyapi.application.facade.FacadeUtils;
 import cz.muni.ics.perunproxyapi.application.facade.ProxyuserFacade;
 import cz.muni.ics.perunproxyapi.application.facade.configuration.FacadeConfiguration;
-import cz.muni.ics.perunproxyapi.application.service.ProxyUserMiddleware;
+import cz.muni.ics.perunproxyapi.application.service.ProxyUserService;
 import cz.muni.ics.perunproxyapi.persistence.adapters.DataAdapter;
 import cz.muni.ics.perunproxyapi.persistence.adapters.impl.AdaptersContainer;
 import cz.muni.ics.perunproxyapi.persistence.enums.Entity;
@@ -29,7 +29,7 @@ public class ProxyuserFacadeImpl implements ProxyuserFacade {
 
     private final Map<String, JsonNode> methodConfigurations;
     private final AdaptersContainer adaptersContainer;
-    private final ProxyUserMiddleware userMiddleware;
+    private final ProxyUserService proxyUserService;
 
     private final String defaultIdpIdentifier;
 
@@ -40,11 +40,11 @@ public class ProxyuserFacadeImpl implements ProxyuserFacade {
     public static final String IDP_IDENTIFIER = "idpIdentifier";
 
     @Autowired
-    public ProxyuserFacadeImpl(@NonNull ProxyUserMiddleware userMiddleware,
+    public ProxyuserFacadeImpl(@NonNull ProxyUserService proxyUserService,
                                @NonNull AdaptersContainer adaptersContainer,
                                @NonNull FacadeConfiguration facadeConfiguration,
                                @Value("${facade.default_idp}") String defaultIdp) {
-        this.userMiddleware = userMiddleware;
+        this.proxyUserService = proxyUserService;
         this.adaptersContainer = adaptersContainer;
         this.methodConfigurations = facadeConfiguration.getProxyUserAdapterMethodConfigurations();
 
@@ -56,9 +56,9 @@ public class ProxyuserFacadeImpl implements ProxyuserFacade {
         JsonNode options = FacadeUtils.getOptions(FIND_BY_EXT_LOGINS, methodConfigurations);
         DataAdapter adapter = FacadeUtils.getAdapter(adaptersContainer, options);
 
-        log.debug("Calling userMiddleware.findByExtLogins on adapter {}", adapter.getClass());
+        log.debug("Calling proxyUserService.findByExtLogins on adapter {}", adapter.getClass());
 
-        return userMiddleware.findByExtLogins(adapter, idpIdentifier, userIdentifiers);
+        return proxyUserService.findByExtLogins(adapter, idpIdentifier, userIdentifiers);
     }
 
     @Override
@@ -67,7 +67,7 @@ public class ProxyuserFacadeImpl implements ProxyuserFacade {
         DataAdapter adapter = FacadeUtils.getAdapter(adaptersContainer, options);
         String idpIdentifier = options.has(IDP_IDENTIFIER) ? options.get(IDP_IDENTIFIER).asText() : defaultIdpIdentifier;
 
-        User user = userMiddleware.findByExtLogin(adapter, idpIdentifier , login);
+        User user = proxyUserService.findByExtLogin(adapter, idpIdentifier , login);
         UserDTO userDTO = null;
 
         if (user != null) {
@@ -82,7 +82,7 @@ public class ProxyuserFacadeImpl implements ProxyuserFacade {
 
             if (fields != null && !fields.isEmpty()){
                 Map<String, PerunAttributeValue> attributeValues =
-                        userMiddleware.getAttributesValues(adapter, Entity.USER , user.getId() , fields);
+                        proxyUserService.getAttributesValues(adapter, Entity.USER , user.getId() , fields);
                 userDTO.setPerunAttributes(attributeValues);
             }
         }
@@ -95,9 +95,9 @@ public class ProxyuserFacadeImpl implements ProxyuserFacade {
         JsonNode options = FacadeUtils.getOptions(FIND_BY_PERUN_USER_ID, methodConfigurations);
         DataAdapter adapter = FacadeUtils.getAdapter(adaptersContainer, options);
 
-        log.debug("Calling userMiddleware.findByPerunUserId on adapter {}", adapter.getClass());
+        log.debug("Calling proxyUserService.findByPerunUserId on adapter {}", adapter.getClass());
 
-        return userMiddleware.findByPerunUserId(adapter, userId);
+        return proxyUserService.findByPerunUserId(adapter, userId);
     }
 
 }
