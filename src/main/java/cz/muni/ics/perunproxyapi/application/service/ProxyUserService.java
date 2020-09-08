@@ -2,10 +2,11 @@ package cz.muni.ics.perunproxyapi.application.service;
 
 import cz.muni.ics.perunproxyapi.persistence.adapters.DataAdapter;
 import cz.muni.ics.perunproxyapi.persistence.enums.Entity;
-import cz.muni.ics.perunproxyapi.persistence.exceptions.PerunUnknownException;
 import cz.muni.ics.perunproxyapi.persistence.exceptions.PerunConnectionException;
+import cz.muni.ics.perunproxyapi.persistence.exceptions.PerunUnknownException;
 import cz.muni.ics.perunproxyapi.persistence.models.PerunAttributeValue;
 import cz.muni.ics.perunproxyapi.persistence.models.User;
+import lombok.NonNull;
 
 import java.util.List;
 import java.util.Map;
@@ -13,7 +14,7 @@ import java.util.Map;
 /**
  * Service layer for user related things. Purpose of this class is to execute correct methods on the given adapter.
  *
- * @author Dominik Frantisek Bucik <bucik@ics.muni.cz>
+ * @author Dominik Frantisek Bucik <bucik@ics.muni.cz>
  * @author Pavol Pluta <pavol.pluta1@gmail.com>
  */
 public interface ProxyUserService {
@@ -61,12 +62,30 @@ public interface ProxyUserService {
 
     /**
      * Get user by id.
+     *
      * @param preferredAdapter Adapter for connection to be used.
      * @param userId Id of a Perun user.
      * @return User or null
      * @throws PerunUnknownException Thrown as wrapper of unknown exception thrown by Perun interface.
      * @throws PerunConnectionException Thrown when problem with connection to Perun interface occurs.
      */
-    User findByPerunUserId(DataAdapter preferredAdapter, Long userId) throws PerunUnknownException, PerunConnectionException;
-    
+    User findByPerunUserId(DataAdapter preferredAdapter, Long userId)
+            throws PerunUnknownException, PerunConnectionException;
+
+    /**
+     * Get entitlements for a user.
+     *
+     * @param userId Id of the user
+     * @param prefix Prefix to be prepended.
+     * @param authority Authority issuing the entitlements.
+     * @param forwardedEntitlementsAttrIdentifier Identifier of the attribute containing forwarded entitlements.
+     * @return List of AARC formatted entitlements (filled or empty).
+     * @throws PerunUnknownException Thrown as wrapper of unknown exception thrown by Perun interface.
+     * @throws PerunConnectionException Thrown when problem with connection to Perun interface occurs.
+     */
+    List<String> getAllEntitlements(@NonNull DataAdapter adapter, @NonNull Long userId,
+                                    @NonNull String prefix, @NonNull String authority,
+                                    String forwardedEntitlementsAttrIdentifier)
+            throws PerunUnknownException, PerunConnectionException;
+
 }

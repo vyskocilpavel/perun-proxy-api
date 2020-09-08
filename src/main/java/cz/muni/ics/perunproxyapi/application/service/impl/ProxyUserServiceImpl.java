@@ -1,14 +1,18 @@
 package cz.muni.ics.perunproxyapi.application.service.impl;
 
 import cz.muni.ics.perunproxyapi.application.service.ProxyUserService;
+import cz.muni.ics.perunproxyapi.application.service.ServiceUtils;
 import cz.muni.ics.perunproxyapi.persistence.adapters.DataAdapter;
 import cz.muni.ics.perunproxyapi.persistence.enums.Entity;
-import cz.muni.ics.perunproxyapi.persistence.exceptions.PerunUnknownException;
 import cz.muni.ics.perunproxyapi.persistence.exceptions.PerunConnectionException;
+import cz.muni.ics.perunproxyapi.persistence.exceptions.PerunUnknownException;
+import cz.muni.ics.perunproxyapi.persistence.models.Group;
 import cz.muni.ics.perunproxyapi.persistence.models.PerunAttributeValue;
 import cz.muni.ics.perunproxyapi.persistence.models.User;
+import lombok.NonNull;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -34,6 +38,26 @@ public class ProxyUserServiceImpl implements ProxyUserService {
     @Override
     public User findByPerunUserId(DataAdapter preferredAdapter, Long userId) throws PerunUnknownException, PerunConnectionException {
         return preferredAdapter.findPerunUserById(userId);
+    }
+
+    @Override
+    public List<String> getAllEntitlements(@NonNull DataAdapter adapter, @NonNull Long userId,
+                                           @NonNull String prefix, @NonNull String authority,
+                                           String forwardedEntitlementsAttrIdentifier)
+            throws PerunUnknownException, PerunConnectionException
+    {
+
+        List<String> forwardedEntitlements = adapter.getForwardedEntitlements(userId,
+                forwardedEntitlementsAttrIdentifier);
+        List<String> entitlements = new ArrayList<>(forwardedEntitlements);
+
+        List<Group> groups = adapter.getUserGroups(userId);
+        if (groups != null && !groups.isEmpty()) {
+            List<String> eduPersonEntitlement = ServiceUtils.wrapGroupEntitlements(groups, prefix, authority);
+            entitlements.addAll(eduPersonEntitlement);
+        }
+
+        return entitlements;
     }
 
 }
