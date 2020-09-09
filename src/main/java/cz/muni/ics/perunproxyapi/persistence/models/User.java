@@ -6,6 +6,9 @@ import lombok.NonNull;
 import lombok.Setter;
 import lombok.ToString;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * Represents user from Perun.
  *
@@ -18,14 +21,28 @@ import lombok.ToString;
 @EqualsAndHashCode
 public class User {
 
-    @NonNull private Long id;
+    @NonNull private Long perunId;
     @NonNull private String firstName;
     @NonNull private String lastName;
+    private String login;
+    private Map<String, PerunAttributeValue> attributes = new HashMap<>();
 
-    public User(Long id, String firstName, String lastName) {
-        this.setId(id);
+    public User(Long perunId, String firstName, String lastName) {
+        this.setPerunId(perunId);
         this.setFirstName(firstName);
         this.setLastName(lastName);
+    }
+
+    public User(Long perunId, String firstName, String lastName, Map<String, PerunAttributeValue> attributes) {
+        this.setPerunId(perunId);
+        this.setFirstName(firstName);
+        this.setLastName(lastName);
+        this.attributes.putAll(attributes);
+    }
+
+    public void setAttributes(Map<String, PerunAttributeValue> attributes) {
+        this.attributes.clear();
+        this.attributes.putAll(attributes);
     }
 
     public void setLastName(String lastName) {

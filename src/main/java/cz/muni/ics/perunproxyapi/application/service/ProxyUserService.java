@@ -88,4 +88,20 @@ public interface ProxyUserService {
                                     String forwardedEntitlementsAttrIdentifier)
             throws PerunUnknownException, PerunConnectionException;
 
+    /**
+     * Get user with attributes by given attribute name, login value and required user's attributes.
+     * @param preferredAdapter Adapter for connection to be used.
+     * @param loginAttrIdentifier Identifier of the attribute containing user login entitlements.
+     * @param login Actual login of the user.
+     * @param attrIdentifiers Identifiers of the attributes to be fetched for user.
+     * @return User with requested attributes or null.
+     * @throws PerunUnknownException Thrown as wrapper of unknown exception thrown by Perun interface.
+     * @throws PerunConnectionException Thrown when problem with connection to Perun interface occurs.
+     */
+    User getUserWithAttributesByLogin(@NonNull DataAdapter preferredAdapter,
+                                      @NonNull String loginAttrIdentifier,
+                                      @NonNull String login,
+                                      List<String> attrIdentifiers)
+            throws PerunUnknownException, PerunConnectionException;
+
 }

@@ -464,6 +464,23 @@ public class RpcAdapterImpl implements FullAdapter {
         return new ArrayList<>(resultCapabilities);
     }
 
+    @Override
+    public User getUserWithAttributesByLogin(@NonNull String loginAttributeIdentifier,
+                                             @NonNull String login,
+                                             @NonNull List<String> attrIdentifiers)
+            throws PerunUnknownException, PerunConnectionException
+    {
+        User user = this.getUserByLogin(loginAttributeIdentifier, login);
+        if (user != null) {
+            Map<String, PerunAttributeValue> userAttributes = this.getAttributesValues(Entity.USER,
+                    user.getPerunId(), attrIdentifiers);
+            if (userAttributes != null) {
+                user.setAttributes(userAttributes);
+            }
+        }
+        return user;
+    }
+
     // private methods
 
     private Set<String> getFacilityCapabilities(Long facilityId, @NonNull String capabilitiesAttrName)
@@ -556,6 +573,33 @@ public class RpcAdapterImpl implements FullAdapter {
 
         JsonNode perunResponse = connectorRpc.post(USERS_MANAGER, "getUserByExtSourceNameAndExtLogin", map);
         return RpcMapper.mapUser(perunResponse);
+    }
+
+    private User getUserByLogin(@NonNull String loginAttrIdentifier, @NonNull String login)
+            throws PerunUnknownException, PerunConnectionException
+    {
+        AttributeObjectMapping mapping = this.getMappingForAttrName(loginAttrIdentifier);
+        if (mapping == null || !StringUtils.hasText(mapping.getRpcName())) {
+            log.error("Cannot look for users, name of the RPC attribute is unknown for identifier {} (mapping:{})",
+                    loginAttrIdentifier, mapping);
+            throw new IllegalArgumentException("Cannot fetch unknown attribute");
+        }
+
+        Map<String, Object> params = new LinkedHashMap<>();
+        params.put(PARAM_ATTRIBUTE_NAME, mapping.getRpcName());
+        params.put(PARAM_ATTRIBUTE_VALUE, login);
+
+        JsonNode perunResponse = connectorRpc.post(USERS_MANAGER, "getUsersByAttributeValue", params);
+        List<User> users = RpcMapper.mapUsers(perunResponse);
+        if (users.size() < 1) {
+            log.debug("No users with login {} stored in the attr mapping {} found.", login, mapping);
+            return null;
+        } else if (users.size() > 1) {
+            log.error("More than one user with login {} stored in the attr mapping {} found.", login, mapping);
+            throw new InternalErrorException("Error when looking for user with login " + login);
+        }
+
+        return users.get(0);
     }
 
     private Set<AttributeObjectMapping> getMappingsForAttrNames(@NonNull Collection<String> attrsToFetch) {
