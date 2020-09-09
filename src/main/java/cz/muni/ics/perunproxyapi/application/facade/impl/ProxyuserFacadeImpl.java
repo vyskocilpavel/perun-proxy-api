@@ -1,7 +1,6 @@
 package cz.muni.ics.perunproxyapi.application.facade.impl;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import cz.muni.ics.perunproxyapi.application.facade.FacadeUtils;
 import cz.muni.ics.perunproxyapi.application.facade.ProxyuserFacade;
 import cz.muni.ics.perunproxyapi.application.facade.configuration.FacadeConfiguration;
@@ -10,7 +9,6 @@ import cz.muni.ics.perunproxyapi.persistence.adapters.DataAdapter;
 import cz.muni.ics.perunproxyapi.persistence.adapters.impl.AdaptersContainer;
 import cz.muni.ics.perunproxyapi.persistence.exceptions.PerunConnectionException;
 import cz.muni.ics.perunproxyapi.persistence.exceptions.PerunUnknownException;
-import cz.muni.ics.perunproxyapi.persistence.models.PerunAttributeValue;
 import cz.muni.ics.perunproxyapi.persistence.models.User;
 import cz.muni.ics.perunproxyapi.presentation.DTOModels.UserDTO;
 import lombok.NonNull;
@@ -22,7 +20,6 @@ import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -31,6 +28,7 @@ import java.util.Map;
 public class ProxyuserFacadeImpl implements ProxyuserFacade {
 
     public static final String FIND_BY_EXT_LOGINS = "find_by_ext_logins";
+    public static final String FIND_BY_IDENTIFIERS = "find_by_identifiers";
     public static final String GET_USER_BY_LOGIN = "get_user_by_login";
     public static final String FIND_BY_PERUN_USER_ID = "find_by_perun_user_id";
     public static final String GET_ALL_ENTITLEMENTS = "get_all_entitlements";
@@ -68,6 +66,20 @@ public class ProxyuserFacadeImpl implements ProxyuserFacade {
     }
 
     @Override
+    public UserDTO findByIdentifiers(@NonNull String idpIdentifier, @NonNull List<String> identifiers) {
+        JsonNode options = FacadeUtils.getOptions(FIND_BY_IDENTIFIERS, methodConfigurations);
+
+        //TODO: currently works only with LDAP
+        //DataAdapter adapter = FacadeUtils.getAdapter(adaptersContainer, options);
+        DataAdapter adapter = adaptersContainer.getLdapAdapter();
+        log.debug("Calling proxyUserService.findByIdentifiers on adapter {}", adapter.getClass());
+
+        List<String> fieldsToFetch = this.getDefaultFields(options);
+        User user = proxyUserService.findByIdentifiers(adapter, idpIdentifier, identifiers, fieldsToFetch);
+        return FacadeUtils.mapUserToUserDTO(user);
+    }
+
+    @Override
     public UserDTO getUserByLogin(@NonNull String login, List<String> fields)
             throws PerunUnknownException, PerunConnectionException
     {
@@ -77,19 +89,7 @@ public class ProxyuserFacadeImpl implements ProxyuserFacade {
 
         User user = proxyUserService.getUserWithAttributesByLogin(adapter, loginAttrIdentifier, login, fieldsToFetch);
 
-        if (user != null) {
-            Map<String, PerunAttributeValue> attributesMap = user.getAttributes();
-            Map<String, JsonNode> attributes = new HashMap<>();
-            if (attributesMap != null) {
-                attributesMap.forEach((key, value) -> attributes.put(key, (value != null) ?
-                        value.valueAsJson() : JsonNodeFactory.instance.nullNode())
-                );
-            }
-
-            return new UserDTO(login, attributes);
-        }
-
-        return null;
+        return FacadeUtils.mapUserToUserDTO(user);
     }
 
     @Override
@@ -129,8 +129,9 @@ public class ProxyuserFacadeImpl implements ProxyuserFacade {
     private List<String> getDefaultFields(JsonNode options) {
         List<String> fields = new ArrayList<>();
         if (!options.hasNonNull(DEFAULT_FIELDS)) {
-            log.warn("Default fields are missing in the configuration file. Returning empty list.");
-            return fields;
+                log.error("Required option {} has not been found by the getEntitlements method. " +
+                        "Check your configuration.", DEFAULT_FIELDS);
+                throw new IllegalArgumentException("Required option has not been found");
         }
 
         for (JsonNode subNode : options.get(DEFAULT_FIELDS)) {

@@ -467,18 +467,27 @@ public class RpcAdapterImpl implements FullAdapter {
     @Override
     public User getUserWithAttributesByLogin(@NonNull String loginAttributeIdentifier,
                                              @NonNull String login,
-                                             @NonNull List<String> attrIdentifiers)
+                                             @NonNull List<String> attrsToReturnIdentifiers)
             throws PerunUnknownException, PerunConnectionException
     {
         User user = this.getUserByLogin(loginAttributeIdentifier, login);
         if (user != null) {
             Map<String, PerunAttributeValue> userAttributes = this.getAttributesValues(Entity.USER,
-                    user.getPerunId(), attrIdentifiers);
+                    user.getPerunId(), attrsToReturnIdentifiers);
             if (userAttributes != null) {
                 user.setAttributes(userAttributes);
             }
         }
         return user;
+    }
+
+    @Override
+    public User findByIdentifiers(@NonNull String idpIdentifier,
+                                  @NonNull List<String> identifiers,
+                                  @NonNull List<String> attrIdentifiers)
+    {
+        log.error("Tried to find a user by additional identifiers through the RPC adapter, which is not supported.");
+        throw new UnsupportedOperationException("This operation is not supported.");
     }
 
     // private methods

@@ -5,6 +5,7 @@ import cz.muni.ics.perunproxyapi.persistence.exceptions.PerunConnectionException
 import cz.muni.ics.perunproxyapi.persistence.exceptions.PerunUnknownException;
 import cz.muni.ics.perunproxyapi.persistence.models.User;
 import cz.muni.ics.perunproxyapi.presentation.DTOModels.UserDTO;
+import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -53,6 +54,28 @@ public class ProxyUserProtectedController {
             throws PerunUnknownException, PerunConnectionException
     {
         return facade.findByExtLogins(idpIdentifier, identifiers);
+    }
+
+    /**
+     * Find user by given source IdP entityId and additional source identifiers.
+     * !!!! Works only with LDAP adapter !!!!
+     *
+     * EXAMPLE CURL:
+     * curl --request GET \
+     *   --url http://localhost:8081/proxyapi/auth/proxy-user/findByIdentifiers?IdPIdentifier=IDP1 \
+     *   &identifiers=ID1&identifiers=ID2 \
+     *   --header 'authorization: Basic auth'
+     *
+     * @param idpIdentifier Identifier of source Identity Provider.
+     * @param identifiers List of string containing identifiers of the user.
+     * @return User or null.
+     */
+    @ResponseBody
+    @GetMapping(value = "/findByIdentifiers", produces = APPLICATION_JSON_VALUE)
+    public UserDTO findByIdentifiers(@NonNull @RequestParam(value = PARAM_IDP_IDENTIFIER) String idpIdentifier,
+                                     @NonNull @RequestParam(value = PARAM_IDENTIFIERS) List<String> identifiers)
+    {
+        return facade.findByIdentifiers(idpIdentifier, identifiers);
     }
 
     /**

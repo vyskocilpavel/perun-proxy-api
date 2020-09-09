@@ -79,4 +79,13 @@ public class ProxyUserServiceImpl implements ProxyUserService {
         return this.getUserWithAttributesByLogin(preferredAdapter, loginAttrIdentifier, login, new ArrayList<>());
     }
 
+    @Override
+    public User findByIdentifiers(@NonNull DataAdapter adapter,
+                                  @NonNull String idpIdentifier,
+                                  @NonNull List<String> identifiers,
+                                  @NonNull List<String> attrIdentifiers)
+    {
+        return adapter.findByIdentifiers(idpIdentifier, identifiers, attrIdentifiers);
+    }
+
 }

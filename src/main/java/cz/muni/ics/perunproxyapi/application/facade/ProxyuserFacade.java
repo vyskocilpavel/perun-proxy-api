@@ -29,6 +29,15 @@ public interface ProxyuserFacade {
     User findByExtLogins(String idpIdentifier, List<String> userIdentifiers) throws PerunUnknownException, PerunConnectionException;
 
     /**
+     * Find user by given source IdP entityId and additional source identifiers.
+     * !!!! Works only with LDAP adapter !!!!
+     * @param idpIdentifier Identifier of source Identity Provider.
+     * @param identifiers List of strings containing identifiers of a user.
+     * @return User or null.
+     */
+    UserDTO findByIdentifiers(@NonNull String idpIdentifier, @NonNull List<String> identifiers);
+
+    /**
      * Get user with fields by his/her login.
      *
      * @param login User's login.
@@ -58,5 +67,4 @@ public interface ProxyuserFacade {
      * @throws PerunConnectionException Thrown when problem with connection to Perun interface occurs.
      */
     List<String> getAllEntitlements(@NonNull String login) throws PerunUnknownException, PerunConnectionException;
-
 }

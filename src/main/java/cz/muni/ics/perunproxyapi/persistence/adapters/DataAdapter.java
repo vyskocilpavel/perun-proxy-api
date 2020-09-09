@@ -182,4 +182,17 @@ public interface DataAdapter {
                                       @NonNull List<String> attrIdentifiers)
             throws PerunUnknownException, PerunConnectionException;
 
+    /**
+     * Find user by given source IdP entityId and additional source identifiers.
+     * <br>
+     * <b>Works only with LDAP adapter!</b>
+     * @param idpIdentifier Identifier of source Identity Provider.
+     * @param identifiers List of strings containing identifiers of the user.
+     * @param attrIdentifiers List of attribute identifiers that should be fetched as well.
+     * @return User or null.
+     */
+    User findByIdentifiers(@NonNull String idpIdentifier,
+                           @NonNull List<String> identifiers,
+                           @NonNull List<String> attrIdentifiers);
+
 }
