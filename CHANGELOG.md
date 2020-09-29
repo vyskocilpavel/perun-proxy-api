@@ -22,7 +22,12 @@ Example:
 
 ## [Unreleased]
 ### Added
-- Add API method /proxy-user/findByExtLogins
-- Add API method /proxy-user/login 
+- Add GET API method /proxy-user/findByExtLogins
+- Add GET API method /proxy-user/findByIdentifiers
+- Add GET API method /proxy-user/findByPerunUserId
+- Add GET API method /proxy-user/{login}
+- Add GET API method /proxy-user/{login}/entitlements
+- Add PUT API method /proxy-user/{login}/identity
+- Add GET API method /relying-party/{rp-identifier}/proxy-user/{login}/entitlements
 
 [Unreleased]: https://github.com/CESNET/perun-proxy-api/commits/master
