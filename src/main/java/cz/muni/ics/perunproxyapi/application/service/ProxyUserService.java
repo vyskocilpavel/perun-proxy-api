@@ -1,10 +1,13 @@
 package cz.muni.ics.perunproxyapi.application.service;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import cz.muni.ics.perunproxyapi.persistence.adapters.DataAdapter;
+import cz.muni.ics.perunproxyapi.persistence.adapters.FullAdapter;
 import cz.muni.ics.perunproxyapi.persistence.enums.Entity;
 import cz.muni.ics.perunproxyapi.persistence.exceptions.PerunConnectionException;
 import cz.muni.ics.perunproxyapi.persistence.exceptions.PerunUnknownException;
 import cz.muni.ics.perunproxyapi.persistence.models.PerunAttributeValue;
+import cz.muni.ics.perunproxyapi.persistence.models.UpdateAttributeMappingEntry;
 import cz.muni.ics.perunproxyapi.persistence.models.User;
 import lombok.NonNull;
 
@@ -89,6 +92,7 @@ public interface ProxyUserService {
                                     String forwardedEntitlementsAttrIdentifier)
             throws PerunUnknownException, PerunConnectionException;
 
+
     /**
      * Get user with attributes by login.
      * @param preferredAdapter Adapter for connection to be used.
@@ -127,5 +131,29 @@ public interface ProxyUserService {
                            @NonNull String idpIdentifier,
                            @NonNull List<String> identifiers,
                            @NonNull List<String> attrIdentifiers);
+
+    /**
+     * Update attributes of the specified user identity.
+     * @param login Login of the user
+     * @param identityId Identifier of identity
+     * @param adapter Adapter to be used.
+     * @param requestAttributes Attributes from request that should be updated.
+     *                          Key is the external name, value is the new value.
+     * @param mapper Map of internal attribute names to external with boolean flag if new values should
+     *               be replaced or appended and boolean flag if the internal name is used for searching.
+     * @param externalToInternalMapping Map of external names to internal identifiers.
+     * @param attrsToSearchBy Attributes by which to look for the correct identity.
+     * @return TRUE if updated, FALSE otherwise.
+     * @throws PerunUnknownException Thrown as wrapper of unknown exception thrown by Perun interface.
+     * @throws PerunConnectionException Thrown when problem with connection to Perun interface occurs.
+     */
+    boolean updateUserIdentityAttributes(@NonNull String login,
+                                         @NonNull String identityId,
+                                         @NonNull FullAdapter adapter,
+                                         @NonNull Map<String, JsonNode> requestAttributes,
+                                         @NonNull Map<String, UpdateAttributeMappingEntry> mapper,
+                                         @NonNull Map<String, String> externalToInternalMapping,
+                                         @NonNull List<String> attrsToSearchBy)
+            throws PerunUnknownException, PerunConnectionException;
 
 }

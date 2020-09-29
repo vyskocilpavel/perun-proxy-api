@@ -10,3 +10,10 @@
     default_fields:
       - "urn:attrname:attribute1"
       - "urn:attrname:attribute2"
+- methodName: "update_user_identity_attributes"
+  options:
+    attrMapper:
+      attrIdentifier1:
+        externalNames: ["name1", "name2"]
+        appendOnly: false
+        useForSearch: false

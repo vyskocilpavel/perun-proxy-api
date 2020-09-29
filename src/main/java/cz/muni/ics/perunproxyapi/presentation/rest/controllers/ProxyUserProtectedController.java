@@ -1,5 +1,8 @@
 package cz.muni.ics.perunproxyapi.presentation.rest.controllers;
 
+
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import cz.muni.ics.perunproxyapi.application.facade.ProxyuserFacade;
 import cz.muni.ics.perunproxyapi.persistence.exceptions.EntityNotFoundException;
 import cz.muni.ics.perunproxyapi.persistence.exceptions.InvalidRequestParameterException;
@@ -12,12 +15,17 @@ import org.springframework.http.MediaType;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import static cz.muni.ics.perunproxyapi.presentation.rest.config.PathConstants.AUTH_PATH;
 import static cz.muni.ics.perunproxyapi.presentation.rest.config.PathConstants.PROXY_USER;
@@ -39,8 +47,10 @@ public class ProxyUserProtectedController {
     public static final String LOGIN = "login";
     public static final String FIELDS = "fields";
     public static final String USER_ID = "userId";
+    public static final String IDENTITY_ID = "identityId";
 
     private final ProxyuserFacade facade;
+
 
     @Autowired
     public ProxyUserProtectedController(ProxyuserFacade facade) {
@@ -188,6 +198,43 @@ public class ProxyUserProtectedController {
             throw new InvalidRequestParameterException("Users login cannot be empty");
         }
         return facade.getAllEntitlements(login);
+    }
+
+    /**
+     * Update UserExtSource attributes
+     * @param login of the user
+     * @param identityId the id of the identity provider
+     * @param body the body containing UserExtSource attributes to be updated
+     * @return true if the attributes were updated properly, false otherwise
+     * @throws PerunUnknownException Thrown as wrapper of unknown exception thrown by Perun interface.
+     * @throws PerunConnectionException Thrown when problem with connection to Perun interface occurs.
+     */
+    @ResponseBody
+    @PutMapping(value = "/{login}/identity",
+            produces = APPLICATION_JSON_VALUE,
+            consumes = APPLICATION_JSON_VALUE)
+    public boolean updateUserIdentityAttributes(@PathVariable(value = LOGIN) String login,
+                                                @RequestParam(value = IDENTITY_ID) String identityId,
+                                                @RequestBody JsonNode body)
+            throws PerunUnknownException, PerunConnectionException, InvalidRequestParameterException
+    {
+        if (body == null || !body.hasNonNull("attributes")) {
+            throw new InvalidRequestParameterException("The request body cannot be null and must contain attributes");
+        }
+        if (!StringUtils.hasText(login)) {
+            throw new InvalidRequestParameterException("Users login cannot be empty");
+        }
+        if (!StringUtils.hasText(identityId)) {
+            throw new InvalidRequestParameterException("identityId cannot be empty");
+        }
+        ObjectNode jsonAttributes = (ObjectNode) body.get("attributes");
+        Map<String, JsonNode> attributes = new HashMap<>();
+        Iterator<String> it = jsonAttributes.fieldNames();
+        while (it.hasNext()) {
+            String fieldName = it.next();
+            attributes.put(fieldName, jsonAttributes.get(fieldName));
+        }
+        return facade.updateUserIdentityAttributes(login, identityId, attributes);
     }
 
 }
